@@ -90,6 +90,14 @@ SMODS.Joker {
   calculate = function(self, card, context)
     if context.drawing_cards and G.STATE == G.STATES.DRAW_TO_HAND then
       ninja_unhighlight_hand_cards()
+    elseif context.end_of_round and context.cardarea == G.jokers then
+      for i = 1, #G.hand.cards do
+        if ninja_end_of_round_would_trigger(G.hand.cards[i]) then
+          G.hand:add_to_highlighted(G.hand.cards[i])
+        else
+          G.hand:remove_from_highlighted(G.hand.cards[i])
+        end
+      end
     end
   end
 }

@@ -125,29 +125,32 @@ end
 match_indent = true
 
 # Ensure that ninja_cards trigger jokers that look for hand and for play
-# Note this should replace in two areas, once in score_card and once in calculate_end_of_round_effects
 [[patches]]
 [patches.pattern]
 target = '''=[SMODS _ "src/utils.lua"]'''
 pattern = """
-SMODS.calculate_card_areas('jokers', context, effects, { main_scoring = true })                                                                          
-SMODS.calculate_card_areas('individual', context, effects, { main_scoring = true })
+if next(effects) then
+    SMODS.calculate_card_areas('jokers', context, effects, { main_scoring = true })
+    SMODS.calculate_card_areas('individual', context, effects, { main_scoring = true })
+end
 """
 position = "at"
 payload = """
-if context.cardarea == "ninja_card" then
-    context.cardarea = G.play
-    SMODS.calculate_card_areas('jokers', context, effects, { main_scoring = true })
-    context.cardarea = G.hand
-    SMODS.calculate_card_areas('jokers', context, effects, { main_scoring = true })
-    context.cardarea = G.play
-    SMODS.calculate_card_areas('individual', context, effects, { main_scoring = true })
-    context.cardarea = G.hand
-    SMODS.calculate_card_areas('individual', context, effects, { main_scoring = true })
-    context.cardarea = "ninja_card"
-else
-    SMODS.calculate_card_areas('jokers', context, effects, { main_scoring = true })
-    SMODS.calculate_card_areas('individual', context, effects, { main_scoring = true })
+if next(effects) then
+  if context.cardarea == "ninja_card" then
+      context.cardarea = G.play
+      SMODS.calculate_card_areas('jokers', context, effects, { main_scoring = true })
+      context.cardarea = G.hand
+      SMODS.calculate_card_areas('jokers', context, effects, { main_scoring = true })
+      context.cardarea = G.play
+      SMODS.calculate_card_areas('individual', context, effects, { main_scoring = true })
+      context.cardarea = G.hand
+      SMODS.calculate_card_areas('individual', context, effects, { main_scoring = true })
+      context.cardarea = "ninja_card"
+  else
+      SMODS.calculate_card_areas('jokers', context, effects, { main_scoring = true })
+      SMODS.calculate_card_areas('individual', context, effects, { main_scoring = true })
+  end
 end
 """
 match_indent = true
@@ -229,23 +232,14 @@ pattern = """
 """
 position = "after"
 payload = """
-local old_area = context.cardarea
 if ninja_end_of_round_would_trigger(card) then
-    context.cardarea = "ninja_card"
+    local old_area = context.cardarea
+    context.cardarea = G.play
+    context.end_of_round = nil
+    SMODS.score_card(card, context)
+    context.end_of_round = true
+    context.cardarea = old_area
 end
-"""
-match_indent = true
-
-# Score end of round cards (2/2)
-[[patches]]
-[patches.pattern]
-target = '''=[SMODS _ "src/utils.lua"]'''
-pattern = """
--- TARGET: effects after end of round evaluation
-"""
-position = "before"
-payload = """
-context.cardarea = old_area
 """
 match_indent = true
 
@@ -384,3 +378,15 @@ end
 """
 match_indent = true
 
+# Debug
+[[patches]]
+[patches.pattern]
+target = '''=[SMODS _ "src/utils.lua"]'''
+pattern = """
+sendWarnMessage('Found effect table with no assigned repetitions during repetition check')
+"""
+position = "after"
+payload = """
+print(debug.traceback())
+"""
+match_indent = true
