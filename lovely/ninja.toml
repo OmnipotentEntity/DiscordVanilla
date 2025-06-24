@@ -1,0 +1,386 @@
+[manifest]
+version = "1.0.0"
+dump_lua = true
+priority = 99
+
+# Add ninja activated cards to playing hand
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = "scoring_hand = final_scoring_hand"
+position = "after"
+payload = '''ninja_add_cards_play_phase(scoring_hand)'''
+match_indent = true
+
+# Need to include scoring hand with held in hand cards
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = "SMODS.calculate_main_scoring({cardarea = v, full_hand = G.play.cards, scoring_hand = scoring_hand, scoring_name = text, poker_hands = poker_hands}, v == G.play and scoring_hand or nil)"
+position = "at"
+payload = "SMODS.calculate_main_scoring({cardarea = v, full_hand = G.play.cards, scoring_hand = scoring_hand, scoring_name = text, poker_hands = poker_hands}, ninja_is_scoring_area(v) and scoring_hand or nil)"
+match_indent = true
+
+# Mark cards played from hand as ninja_cards
+[[patches]]
+[patches.pattern]
+target = '''=[SMODS _ "src/utils.lua"]'''
+pattern = """
+if scoring_hand then
+  if in_scoring then context.cardarea = G.play else context.cardarea = 'unscored' end
+end
+SMODS.score_card(card, context)
+"""
+position = "at"
+payload = """
+local old_area = context.cardarea
+if scoring_hand then
+  if in_scoring then
+      if context.cardarea == G.hand then
+          context.cardarea = "ninja_card"
+      else
+          context.cardarea = G.play
+      end
+  else
+      context.cardarea = "unscored"
+  end
+end
+SMODS.score_card(card, context)
+context.cardarea = old_area
+"""
+match_indent = true
+
+# Score ninja_cards as both hand and play, enable end of round scoring
+[[patches]]
+[patches.pattern]
+target = "functions/common_events.lua"
+pattern = "if context.cardarea == G.play and context.main_scoring then"
+position = "at"
+payload = """
+if (context.cardarea == G.play or context.cardarea == "ninja_card") and context.main_scoring or
+    context.cardarea == \"ninja_card\" and context.playing_card_end_of_round then
+"""
+match_indent = true
+
+# Score ninja_cards as both hand and play, also make it so that these values are
+# not overwritten but instead combined if both code paths are triggered
+[[patches]]
+[patches.pattern]
+target = "functions/common_events.lua"
+pattern = """
+if context.cardarea == G.hand and context.main_scoring then
+    ret.playing_card = {}
+    local h_mult = card:get_chip_h_mult()
+    if h_mult ~= 0 then
+        ret.playing_card.h_mult = h_mult
+    end
+
+    local h_x_mult = card:get_chip_h_x_mult()
+    if h_x_mult > 0 then
+        ret.playing_card.x_mult = h_x_mult
+    end
+
+    local h_chips = card:get_chip_h_bonus()
+    if h_chips ~= 0 then
+        ret.playing_card.h_chips = h_chips
+    end
+
+    local h_x_chips = card:get_chip_h_x_bonus()
+    if h_x_chips > 0 then
+        ret.playing_card.x_chips = h_x_chips
+    end
+
+    -- TARGET: main scoring on held cards
+end
+"""
+position = "at"
+payload = """
+if (context.cardarea == G.hand or context.cardarea == "ninja_card") and context.main_scoring then
+    if context.cardarea ~= "ninja_card" then
+        ret.playing_card = {}
+    end
+    local h_mult = card:get_chip_h_mult()                                   
+    if h_mult ~= 0 then                                                     
+        ret.playing_card.h_mult = (ret.playing_card.h_mult or 0) + h_mult                                    
+    end                                                                     
+
+    local h_x_mult = card:get_chip_h_x_mult()                               
+    if h_x_mult > 0 then                                                    
+        ret.playing_card.x_mult = (ret.playing_card.x_mult or 0) + h_x_mult                                 
+    end                                                                     
+
+    local h_chips = card:get_chip_h_bonus()                                 
+    if h_chips ~= 0 then                                                    
+        ret.playing_card.h_chips = (ret.playing_card.h_chips or 0) + h_chips                                 
+    end                                                                     
+
+    local h_x_chips = card:get_chip_h_x_bonus()                             
+    if h_x_chips > 0 then                                                   
+        ret.playing_card.x_chips = (ret.playing_card.x_chips or 0) + h_x_chips                               
+    end                                                                     
+
+    -- TARGET: main scoring on held cards                                   
+end
+"""
+match_indent = true
+
+# Ensure that ninja_cards trigger jokers that look for hand and for play
+# Note this should replace in two areas, once in score_card and once in calculate_end_of_round_effects
+[[patches]]
+[patches.pattern]
+target = '''=[SMODS _ "src/utils.lua"]'''
+pattern = """
+SMODS.calculate_card_areas('jokers', context, effects, { main_scoring = true })                                                                          
+SMODS.calculate_card_areas('individual', context, effects, { main_scoring = true })
+"""
+position = "at"
+payload = """
+if context.cardarea == "ninja_card" then
+    context.cardarea = G.play
+    SMODS.calculate_card_areas('jokers', context, effects, { main_scoring = true })
+    context.cardarea = G.hand
+    SMODS.calculate_card_areas('jokers', context, effects, { main_scoring = true })
+    context.cardarea = G.play
+    SMODS.calculate_card_areas('individual', context, effects, { main_scoring = true })
+    context.cardarea = G.hand
+    SMODS.calculate_card_areas('individual', context, effects, { main_scoring = true })
+    context.cardarea = "ninja_card"
+else
+    SMODS.calculate_card_areas('jokers', context, effects, { main_scoring = true })
+    SMODS.calculate_card_areas('individual', context, effects, { main_scoring = true })
+end
+"""
+match_indent = true
+
+# Ensure that repetitions are handled correctly for ninja cards
+[[patches]]
+[patches.pattern]
+target = '''=[SMODS _ "src/utils.lua"]'''
+pattern = """
+--calculate the joker effects
+local eval, post = eval_card(_card, context)
+if next(post) then SMODS.trigger_effects({post}, card) end
+for key, value in pairs(eval) do
+    if key ~= 'retriggers' then
+        SMODS.insert_repetitions(reps, value, _card)
+    end
+end
+if eval.retriggers then
+    context.retrigger_joker = true
+    for rt = 1, #eval.retriggers do
+        context.retrigger_joker = eval.retriggers[rt].retrigger_card
+        SMODS.insert_repetitions(reps, eval.retriggers[rt], eval.retriggers[rt].message_card or _card)
+        local rt_eval, rt_post = eval_card(_card, context)
+        if next(rt_post) then SMODS.trigger_effects({rt_post}, card) end
+        for key, value in pairs(rt_eval) do
+            if key ~= 'retriggers' then
+                SMODS.insert_repetitions(reps, value, _card)
+            end
+        end
+    end
+    context.retrigger_joker = nil
+end
+"""
+position = "at"
+payload = """
+local old_area = context.cardarea
+local evaluate_joker_for_rep = function(_card, context)
+    local eval, post = eval_card(_card, context)
+    if next(post) then SMODS.trigger_effects({post}, card) end
+    for key, value in pairs(eval) do
+        if key ~= 'retriggers' then
+            SMODS.insert_repetitions(reps, value, _card)
+        end
+    end
+    if eval.retriggers then
+        context.retrigger_joker = true
+        for rt = 1, #eval.retriggers do
+            context.retrigger_joker = eval.retriggers[rt].retrigger_card
+            SMODS.insert_repetitions(reps, eval.retriggers[rt], eval.retriggers[rt].message_card or _card)
+            local rt_eval, rt_post = eval_card(_card, context)
+            if next(rt_post) then SMODS.trigger_effects({rt_post}, card) end
+            for key, value in pairs(rt_eval) do
+                if key ~= 'retriggers' then
+                    SMODS.insert_repetitions(reps, value, _card)
+                end
+            end
+        end
+        context.retrigger_joker = nil
+    end
+end
+
+if context.cardarea == "ninja_card" then
+    context.cardarea = G.play
+    evaluate_joker_for_rep(_card, context)
+    context.cardarea = G.hand
+end
+
+evaluate_joker_for_rep(_card, context)
+context.cardarea = old_area
+"""
+match_indent = true
+
+# Score end of round cards (1/2)
+[[patches]]
+[patches.pattern]
+target = '''=[SMODS _ "src/utils.lua"]'''
+pattern = """
+--calculate the hand effects
+"""
+position = "after"
+payload = """
+local old_area = context.cardarea
+if ninja_end_of_round_would_trigger(card) then
+    context.cardarea = "ninja_card"
+end
+"""
+match_indent = true
+
+# Score end of round cards (2/2)
+[[patches]]
+[patches.pattern]
+target = '''=[SMODS _ "src/utils.lua"]'''
+pattern = """
+-- TARGET: effects after end of round evaluation
+"""
+position = "before"
+payload = """
+context.cardarea = old_area
+"""
+match_indent = true
+
+# Reenable editions (1/2)
+[[patches]]
+[patches.pattern]
+target = "functions/common_events.lua"
+pattern = """
+if context.repetition_only then
+    if card.ability.set == 'Enhanced' then
+        local enhancement = card:calculate_enhancement(context)
+        if enhancement then
+            ret.enhancement = enhancement
+        end
+    end
+    if context.extra_enhancement then return ret end
+    if card.edition then
+        local edition = card:calculate_edition(context)
+        if edition then
+            ret.edition = edition
+        end
+    end
+    if card.seal then
+        local seals = card:calculate_seal(context)
+        if seals then
+            ret.seals = seals
+        end
+    end
+    for _,k in ipairs(SMODS.Sticker.obj_buffer) do
+        local v = SMODS.Stickers[k]
+        local sticker = card:calculate_sticker(context, k)
+        if sticker then
+            ret[v] = sticker
+        end
+    end
+
+    -- TARGET: evaluate your own repetition effects
+    return ret
+end
+"""
+position = "at"
+payload = """
+local calculate_editions_seals_stickers = function(card, context, ret)
+    if card.ability.set == 'Enhanced' then
+        local enhancement = card:calculate_enhancement(context)
+        if enhancement then
+            ret.enhancement = enhancement
+        end
+    end
+    -- Stop double replacement
+    if context.extra_enhancement then return ret end
+    if card.edition then
+        local edition = card:calculate_edition(context)
+        if edition then
+            ret.edition = edition
+        end
+    end
+    if card.seal then
+        local seals = card:calculate_seal(context)
+        if seals then
+            ret.seals = seals
+        end
+    end
+    for _,k in ipairs(SMODS.Sticker.obj_buffer) do
+        local v = SMODS.Stickers[k]
+        local sticker = card:calculate_sticker(context, k)
+        if sticker then
+            ret[v] = sticker
+        end
+    end
+
+    return ret
+end
+
+if context.repetition_only then
+    if context.cardarea == "ninja_card" then
+        context.cardarea = G.play
+        ret = calculate_editions_seals_stickers(card, context, ret)
+        context.cardarea = G.hand
+        ret = calculate_editions_seals_stickers(card, context, ret)
+        context.cardarea = "ninja_card"
+    else
+        ret = calculate_editions_seals_stickers(card, context, ret)
+    end
+
+    -- TARGET: evaluate your own repetition effects
+
+    return ret
+end
+"""
+match_indent = true
+
+# Reenable editions (2/2)
+[[patches]]
+[patches.pattern]
+target = "functions/common_events.lua"
+pattern = """
+if card.ability.set == 'Enhanced' then
+    local enhancement = card:calculate_enhancement(context)
+    if enhancement then
+        ret.enhancement = enhancement
+    end
+end
+if context.extra_enhancement then return ret end
+if card.edition then
+    local edition = card:calculate_edition(context)
+    if edition then
+        ret.edition = edition
+    end
+end
+if card.seal then
+    local seals = card:calculate_seal(context)
+    if seals then
+        ret.seals = seals
+    end
+end
+for _,k in ipairs(SMODS.Sticker.obj_buffer) do
+    local v = SMODS.Stickers[k]
+    local sticker = card:calculate_sticker(context, k)
+    if sticker then
+        ret[v] = sticker
+    end
+end
+"""
+position = "at"
+payload = """
+if context.cardarea == "ninja_card" then
+    context.cardarea = G.play
+    ret = calculate_editions_seals_stickers(card, context, ret)
+    context.cardarea = G.hand
+    ret = calculate_editions_seals_stickers(card, context, ret)
+    context.cardarea = "ninja_card"
+else
+    ret = calculate_editions_seals_stickers(card, context, ret)
+end
+"""
+match_indent = true
+

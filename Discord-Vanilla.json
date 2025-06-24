@@ -1,0 +1,20 @@
+{
+	"id": "Vanilla-Discord",
+	"name": "Unnamed Vanilla Discord Mod",
+	"author": ["OmnipotentEntity"],
+	"description": "A vanilla friendly mod featuring ideas submitted to the Balatro Discord Suggestions Containment Area.",
+	"prefix": "uvdm",
+	"main_file": "discord.lua",
+	"priority": 99,
+	"badge_colour": "289657",
+	"badge_text_colour": "AB1919",
+	"display_name": "Discord Slop",
+	"version": "1.0.0",
+	"dependencies": [
+		"Steamodded (>=1.*)",
+		"Lovely (>=0.6)"
+	],
+	"conflicts": [ ],
+	"provides": [ ],
+	"dump_loc": false
+}
