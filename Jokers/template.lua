@@ -29,14 +29,19 @@ SMODS.Joker {
               end
           end
 
+          -- reverse the list
+          for i=1, math.floor(#targets / 2), 1 do
+              targets[i], targets[#targets - i + 1] = targets[#targets - i + 1], targets[i]
+          end
+
           if reps > 0 then
               return {
                 message = localize('k_tarot'),
                 repetitions = reps,
                 card = card,
                 func = function()
-                    card_eval_status_text(targets[1], 'extra', nil, percent, nil, {message = localize('k_again_ex')})
-                    table.remove(targets, 1)
+                    local target = table.remove(targets)
+                    card_eval_status_text(target, 'extra', nil, percent, nil, {message = localize('k_again_ex')})
                 end
               }
           end
