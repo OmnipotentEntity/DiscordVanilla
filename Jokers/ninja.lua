@@ -72,7 +72,6 @@ function ninja_end_of_round_would_trigger(card)
   end
 end
 
--- TODO: Fix issue where repetitions aren't shared during end of round phase.
 SMODS.Joker {
   key = "ninja",
   loc_txt = {

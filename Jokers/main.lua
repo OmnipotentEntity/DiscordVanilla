@@ -9,3 +9,6 @@ SMODS.Atlas {
 
 -- Ninja
 assert(SMODS.load_file("Jokers/ninja.lua"))()
+
+-- Template
+assert(SMODS.load_file("Jokers/template.lua"))()

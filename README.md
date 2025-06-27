@@ -5,4 +5,6 @@ Credits:
 
 Programming: OmnipotentEntity
 
-Ideas: None Yet
+Ideas:
+ - Mathman2028: Template
+ - OmnipotentEntity: Ninja
