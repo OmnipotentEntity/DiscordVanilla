@@ -17,7 +17,7 @@ SMODS.Joker {
   pos = { x = 1, y = 0 },
   cost = 10,
   calculate = function(self, card, context)
-      if context.cardarea == G.play and context.repetition and not context.repetition_only then
+      if (context.cardarea == G.play or context.cardarea == G.hand) and context.repetition and not context.repetition_only then
           local reps = 0
           local targets = {}
           for _,_card in ipairs(G.consumeables.cards) do
