@@ -40,7 +40,7 @@ function ninja_add_cards_play_phase(scoring_hand)
       card_id = G.hand.cards[i]:get_id()
       is_face = G.hand.cards[i]:is_face()
       is_steel = SMODS.has_enhancement(G.hand.cards[i], 'm_steel')
-      if i == rf_target or
+      if (i == rf_target and has_rf) or
           (card_id == 13 and has_baron) or
           (card_id == 12 and had_stm) or
           (is_face and has_rp) or
