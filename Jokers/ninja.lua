@@ -72,13 +72,18 @@ function ninja_end_of_round_would_trigger(card)
   end
 end
 
+-- TODO: Fix issue where repetitions aren't shared during end of round phase.
 SMODS.Joker {
   key = "ninja",
   loc_txt = {
     name = "Ninja",
     text = {
-      "Cards triggered through {C:attention}held in hand{} abilities are also {C:attention}scored{}.",
-      "{s:0.8}(Chips and Mult gained during the {C:attention}end of round{} phase are discarded.)"
+      "Cards triggered through",
+      "{C:attention}held in hand{} abilities",
+      "are also {C:attention}scored{}.",
+      "{s:0.8}(Chips and Mult gained",
+      "{s:0.8}during the {C:attention,s:0.8}end of round{}",
+      "{s:0.8}phase are discarded.)"
     },
   },
 
