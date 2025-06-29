@@ -9,7 +9,11 @@ SMODS.Atlas {
 
 local base_dir = "Jokers/"
 
-local file_list = {"ninja.lua", "template.lua"}
+local file_list = {
+  "ninja.lua",
+  "template.lua",
+  "filibuster.lua"
+}
 
 for _, file in ipairs(file_list) do
     assert(SMODS.load_file(base_dir .. file))()
