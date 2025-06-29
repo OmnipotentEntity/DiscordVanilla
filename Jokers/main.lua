@@ -1,14 +1,16 @@
 -- The Joker Loading file
 
 SMODS.Atlas {
-	key = "DiscordVanilla",
-	path = "DiscordVanilla.png",
+	key = "Jokers",
+	path = "Jokers.png",
 	px = 71,
 	py = 95
 }
 
--- Ninja
-assert(SMODS.load_file("Jokers/ninja.lua"))()
+local base_dir = "Jokers/"
 
--- Template
-assert(SMODS.load_file("Jokers/template.lua"))()
+local file_list = {"ninja.lua", "template.lua"}
+
+for _, file in ipairs(file_list) do
+    assert(SMODS.load_file(base_dir .. file))()
+end

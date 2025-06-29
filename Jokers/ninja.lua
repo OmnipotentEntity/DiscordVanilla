@@ -88,7 +88,7 @@ SMODS.Joker {
 
   config = { extra = {} },
   rarity = 3,
-  atlas = "DiscordVanilla",
+  atlas = "Jokers",
   pos = { x = 0, y = 0 },
   cost = 10,
   calculate = function(self, card, context)

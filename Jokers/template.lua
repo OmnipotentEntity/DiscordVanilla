@@ -13,7 +13,7 @@ SMODS.Joker {
   blueprint_compat = true,
   config = { extra = {} },
   rarity = 3,
-  atlas = "DiscordVanilla",
+  atlas = "Jokers",
   pos = { x = 1, y = 0 },
   cost = 10,
   calculate = function(self, card, context)
