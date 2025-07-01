@@ -13,7 +13,7 @@ if G.GAME.chips - G.GAME.blind.chips >= 0 or G.GAME.current_round.hands_left < 1
 position = "at"
 payload = """
 local filibuster_active, filibuster_card = next(SMODS.find_card('j_uvdm_filibuster'))
-if filibuster_active and G.GAME.chips - G.GAME.blind.chips >= 0 then
+if filibuster_active and G.GAME.chips - G.GAME.blind.chips >= 0 and G.GAME.current_round.hands_left >= 1 then
   local filibuster_msg = pseudorandom_element(filibuster_msgs, pseudoseed('filibuster_msg'))
   card_eval_status_text(filibuster_card, 'extra', nil, nil, nil, {message = filibuster_msg})
 end
