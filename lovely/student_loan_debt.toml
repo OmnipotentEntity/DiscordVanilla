@@ -1,0 +1,40 @@
+[manifest]
+version = "1.0.0"
+dump_lua = true
+priority = 99
+
+# If we're in the Student Loan Debt Challenge, put ourselves deep in debt
+[[patches]]
+[patches.pattern]
+target = "game.lua"
+pattern = '''
+elseif v.id == 'no_shop_jokers' then 
+    self.GAME.joker_rate = 0
+'''
+position = "after"
+payload = '''
+elseif v.id == 'big_starting_debt' then 
+    self.GAME.bankrupt_at = -300
+'''
+match_indent = true
+
+# If we're in the Student Loan Debt Challenge, also check money at the end of the game
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = '''
+if G.GAME.round_resets.ante == G.GAME.win_ante and G.GAME.blind:get_type() == 'Boss' then
+    game_won = true
+    G.GAME.won = true
+'''
+position = "at"
+payload = '''
+if G.GAME.round_resets.ante == G.GAME.win_ante and G.GAME.blind:get_type() == 'Boss' then
+    if not (G.GAME.modifiers.need_pos_money_to_win and G.GAME.dollars < 0) then
+        game_won = true
+        G.GAME.won = true
+    else
+        game_over = true
+    end
+'''
+match_indent = true
