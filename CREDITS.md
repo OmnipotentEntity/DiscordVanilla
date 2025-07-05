@@ -6,7 +6,8 @@ Ideas:
  - OmnipotentEntity: Ninja, Chimera
  - /u/yellow-hammer: Filibuster
  - unknownusergd: Student Loan Debt
+ - crittykatie: Census
 
 Art:
- - OmnipotentEntity: Ninja, Template, Chimera
+ - OmnipotentEntity: Ninja, Template, Chimera, Census
  - /u/yellow-hammer: Filibuster
