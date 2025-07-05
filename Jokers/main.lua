@@ -12,7 +12,9 @@ local base_dir = "Jokers/"
 local file_list = {
   "ninja.lua",
   "template.lua",
-  "filibuster.lua"
+  "filibuster.lua",
+  -- "chagney.lua",
+  "census.lua"
 }
 
 for _, file in ipairs(file_list) do
