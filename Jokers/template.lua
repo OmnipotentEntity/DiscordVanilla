@@ -41,7 +41,7 @@ SMODS.Joker {
                 card = card,
                 func = function()
                     local target = table.remove(targets)
-                    card_eval_status_text(target, 'extra', nil, percent, nil, {message = localize('k_again_ex')})
+                    card_eval_status_text(target, 'extra', nil, nil, nil, {message = localize('k_again_ex')})
                 end
               }
           end

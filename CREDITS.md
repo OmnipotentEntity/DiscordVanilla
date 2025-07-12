@@ -2,12 +2,13 @@ Programming:
  - OmnipotentEntity: All so far
 
 Ideas:
+ - crittykatie: Census
+ - liz\_leziari: Hivemind
  - Mathman2028: Template
  - OmnipotentEntity: Ninja, Chimera
- - /u/yellow-hammer: Filibuster
  - unknownusergd: Student Loan Debt
- - crittykatie: Census
+ - /u/yellow-hammer: Filibuster
 
 Art:
- - OmnipotentEntity: Ninja, Template, Chimera, Census
+ - OmnipotentEntity: Ninja, Template, Chimera, Census, Hivemind
  - /u/yellow-hammer: Filibuster
