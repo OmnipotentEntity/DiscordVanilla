@@ -1,3 +1,10 @@
+local shares_a_suit = function (card, other_card)
+  return card:is_suit('Spades') and other_card:is_suit('Spades') or
+    card:is_suit('Hearts') and other_card:is_suit('Hearts') or
+    card:is_suit('Clubs') and other_card:is_suit('Clubs') or
+    card:is_suit('Diamonds') and other_card:is_suit('Diamonds')
+end
+
 SMODS.Joker {
   key = "hivemind",
   loc_txt = {
@@ -18,12 +25,12 @@ SMODS.Joker {
   calculate = function(self, card, context)
     if context.cardarea == G.play and context.repetition and not context.repetition_only then
       if not SMODS.has_no_suit(context.other_card) and 
-        not SMODS.has_no_rank(context.other_card) then
+          not SMODS.has_no_rank(context.other_card) then
         local _cards = {}
         for i=1, #G.play.cards do
           local _card = G.play.cards[i]
-          if _card.base.suit == context.other_card.base.suit and
-            _card.base.value == context.other_card.base.value then
+          if _card.base.value == context.other_card.base.value and
+              shares_a_suit(_card, context.other_card) then
             _cards[#_cards+1] = _card
           end
         end
