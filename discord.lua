@@ -1,8 +1,17 @@
--- Load jokers
+-- Load directories
 
-assert(SMODS.load_file("Jokers/main.lua"))()
-assert(SMODS.load_file("Consumables/main.lua"))()
-assert(SMODS.load_file("Challenges/main.lua"))()
+local dir_list = {
+  "Jokers",
+  "Consumables",
+  "Challenges",
+  "Misc"
+}
+
+local main_file = "main.lua"
+
+for _, dir_name in ipairs(dir_list) do
+    assert(SMODS.load_file(dir_name .. "/" .. main_file))()
+end
 
 SMODS.current_mod.reset_game_globals = function(run_start)
   -- For ninja, reset hand chips and mult after end of round scoring

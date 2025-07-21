@@ -1,0 +1,189 @@
+[manifest]
+version = "1.0.0"
+dump_lua = true
+priority = 99
+
+# Add a feature to UIBox_button to allow for updating text
+[[patches]]
+[patches.pattern]
+target = "functions/UI_definitions.lua"
+pattern = '''
+for k, v in ipairs(args.label) do 
+  if k == #args.label and args.focus_args and args.focus_args.set_button_pip then 
+    button_pip ='set_button_pip'
+  end
+  table.insert(but_UI_label, {n=G.UIT.R, config={align = "cm", padding = 0, minw = args.minw, maxw = args.maxw}, nodes={
+    {n=G.UIT.T, config={text = v, scale = args.scale, colour = args.text_colour, shadow = args.shadow, focus_args = button_pip and args.focus_args or nil, func = button_pip, ref_table = args.ref_table}}
+  }})
+end
+'''
+position = "at"
+payload = '''
+for k, v in ipairs(args.label) do 
+  if k == #args.label and args.focus_args and args.focus_args.set_button_pip then 
+    button_pip ='set_button_pip'
+  end
+  if type(v) == 'table' then
+    text = v.text
+    ref_table = v.ref_table or args.ref_table
+    ref_value = v.ref_value
+    table.insert(but_UI_label, {n=G.UIT.R, config={align = "cm", padding = 0, minw = args.minw, maxw = args.maxw}, nodes={
+      {n=G.UIT.T, config={text = text, scale = args.scale, colour = args.text_colour, shadow = args.shadow, focus_args = button_pip and args.focus_args or nil, func = button_pip, ref_table = ref_table, ref_value = ref_value}}
+    }})
+  else
+    table.insert(but_UI_label, {n=G.UIT.R, config={align = "cm", padding = 0, minw = args.minw, maxw = args.maxw}, nodes={
+      {n=G.UIT.T, config={text = v, scale = args.scale, colour = args.text_colour, shadow = args.shadow, focus_args = button_pip and args.focus_args or nil, func = button_pip, ref_table = args.ref_table}}
+    }})
+  end
+end
+'''
+match_indent = true
+
+
+# Enable button if a boss reroll tag exists
+[[patches]]
+[patches.pattern]
+target = "functions/UI_definitions.lua"
+pattern = '''
+(G.GAME.used_vouchers["v_retcon"] or G.GAME.used_vouchers["v_directors_cut"]) and
+UIBox_button({label = {localize('b_reroll_boss'), localize('$')..'10'}, button = "reroll_boss", func = 'reroll_boss_button'}) or nil
+'''
+position = "at"
+payload = '''
+uvdm_get_boss_reroll_button()
+'''
+match_indent = true
+
+# Enable if Boss Tag is available, update the text on the button
+[[patches]]
+[patches.pattern]
+target = "functions/button_callbacks.lua"
+pattern = '''
+if ((G.GAME.dollars-G.GAME.bankrupt_at) - 10 >= 0) and
+  (G.GAME.used_vouchers["v_retcon"] or
+  (G.GAME.used_vouchers["v_directors_cut"] and not G.GAME.round_resets.boss_rerolled)) then 
+    e.config.colour = G.C.RED
+    e.config.button = 'reroll_boss'
+    e.children[1].children[1].config.shadow = true
+    if e.children[2] then e.children[2].children[1].config.shadow = true end 
+'''
+position = "at"
+payload = '''
+uvdm_update_boss_reroll_text()
+if uvdm_get_first_boss_tag() or (((G.GAME.dollars-G.GAME.bankrupt_at) - 10 >= 0) and
+  (G.GAME.used_vouchers["v_retcon"] or
+  (G.GAME.used_vouchers["v_directors_cut"] and not G.GAME.round_resets.boss_rerolled))) then 
+    e.config.colour = G.C.RED
+    e.config.button = 'reroll_boss'
+    e.children[1].children[1].config.shadow = true
+    if e.children[2] then e.children[2].children[1].config.shadow = true end 
+'''
+match_indent = true
+
+# Patch out behavior where using a Boss Reroll tag disables Director's cut, handle new tag system
+[[patches]]
+[patches.pattern]
+target = "functions/button_callbacks.lua"
+pattern = '''
+G.GAME.round_resets.boss_rerolled = true
+if not G.from_boss_tag then ease_dollars(-10) end
+G.from_boss_tag = nil
+'''
+position = "at"
+payload = '''
+local tag = uvdm_get_first_boss_tag()
+if not tag then
+  ease_dollars(-10) 
+  G.GAME.round_resets.boss_rerolled = true
+else
+  tag:apply_to_run({type = 'ui_requested'})
+end
+'''
+match_indent = true
+
+# Add a new handler
+[[patches]]
+[patches.pattern]
+target = "tag.lua"
+pattern = '''
+elseif _context.type == 'shop_final_pass' then
+    if self.name == 'Coupon Tag' and (G.shop and not G.GAME.shop_free) then
+        G.GAME.shop_free = true
+        self:yep('+', G.C.GREEN,function() 
+            if G.shop_jokers and G.shop_booster then 
+                for k, v in pairs(G.shop_jokers.cards) do
+                    v.ability.couponed = true
+                    v:set_cost()
+                end
+                for k, v in pairs(G.shop_booster.cards) do
+                    v.ability.couponed = true
+                    v:set_cost()
+                end
+            end
+            return true
+        end)
+        self.triggered = true
+        return true
+    end
+'''
+position = "after"
+payload = '''
+elseif _context.type == 'ui_requested' then
+  print("hi")
+  if self.name == 'Boss Tag' then
+    self:yep('+', G.C.GREEN,function() 
+        G.FUNCS.reroll_boss()
+
+        G.E_MANAGER:add_event(Event({func = function()
+            G.E_MANAGER:add_event(Event({func = function()
+                  return true; end}))
+            return true; end}))
+
+        return true
+        end)
+    self.triggered = true
+    return true
+  end
+'''
+match_indent = true
+
+# Remove automatic rerolling
+[[patches]]
+[patches.pattern]
+target = "tag.lua"
+pattern = '''
+if self.name == 'Boss Tag' then
+  local lock = self.ID
+  G.CONTROLLER.locks[lock] = true
+  self:yep('+', G.C.GREEN,function() 
+      G.from_boss_tag = true
+      G.FUNCS.reroll_boss()
+
+      G.E_MANAGER:add_event(Event({func = function()
+          G.E_MANAGER:add_event(Event({func = function()
+                G.CONTROLLER.locks[lock] = nil
+                return true; end}))
+          return true; end}))
+
+      return true
+      end)
+  self.triggered = true
+  return true
+end
+'''
+position = "at"
+payload = ''
+match_indent = true
+
+# Change the tag type
+[[patches]]
+[patches.pattern]
+target = "game.lua"
+pattern = '''
+tag_boss =          {name = 'Boss Tag',         set = 'Tag', discovered = false, min_ante = nil, order = 9, config = {type = 'new_blind_choice', }, pos = {x = 0,y = 2}},
+'''
+position = "at"
+payload = '''
+tag_boss =          {name = 'Boss Tag',         set = 'Tag', discovered = false, min_ante = nil, order = 9, config = {type = 'ui_requested', }, pos = {x = 0,y = 2}},
+'''
+match_indent = true
