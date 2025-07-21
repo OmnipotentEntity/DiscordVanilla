@@ -39,7 +39,6 @@ end
 '''
 match_indent = true
 
-
 # Enable button if a boss reroll tag exists
 [[patches]]
 [patches.pattern]
@@ -51,6 +50,35 @@ UIBox_button({label = {localize('b_reroll_boss'), localize('$')..'10'}, button =
 position = "at"
 payload = '''
 uvdm_get_boss_reroll_button()
+'''
+match_indent = true
+
+# Create button if we are pulling a new boss reroll tag (1/2)
+[[patches]]
+[patches.pattern]
+target = "functions/UI_definitions.lua"
+pattern = '''
+function add_tag(_tag)
+'''
+position = "after"
+payload = '''
+  local button_exists = G.GAME.used_vouchers["v_retcon"] or G.GAME.used_vouchers["v_directors_cut"] or uvdm_get_first_boss_tag()
+'''
+match_indent = true
+
+# Create button if we are pulling a new boss reroll tag (2/2)
+[[patches]]
+[patches.pattern]
+target = "functions/UI_definitions.lua"
+pattern = '''
+G.GAME.tags[#G.GAME.tags+1] = _tag
+_tag.HUD_tag = G.HUD_tags[#G.HUD_tags]
+'''
+position = "after"
+payload = '''
+if not button_exists and _tag.name == "Boss Tag" then
+  uvdm_recreate_blind_prompt()
+end
 '''
 match_indent = true
 
@@ -129,7 +157,6 @@ elseif _context.type == 'shop_final_pass' then
 position = "after"
 payload = '''
 elseif _context.type == 'ui_requested' then
-  print("hi")
   if self.name == 'Boss Tag' then
     self:yep('+', G.C.GREEN,function() 
         G.FUNCS.reroll_boss()
