@@ -8,7 +8,8 @@ Ideas:
  - OmnipotentEntity: Ninja, Chimera
  - unknownusergd: Student Loan Debt
  - /u/yellow-hammer: Filibuster
+ - Dimoniosus: Rolling Stone
 
 Art:
- - OmnipotentEntity: Ninja, Template, Chimera, Census, Hivemind
+ - OmnipotentEntity: Ninja, Template, Chimera, Census, Hivemind, Rolling Stone
  - /u/yellow-hammer: Filibuster

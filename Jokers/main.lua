@@ -15,7 +15,8 @@ local file_list = {
   "filibuster.lua",
   -- "chagney.lua",
   "census.lua",
-  "hivemind.lua"
+  "hivemind.lua",
+  "rollingstone.lua"
 }
 
 for _, file in ipairs(file_list) do

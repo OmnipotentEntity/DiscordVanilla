@@ -1,0 +1,17 @@
+[manifest]
+version = "1.0.0"
+dump_lua = true
+priority = 99
+
+# Give a generic shop update hook
+[[patches]]
+[patches.pattern]
+target = "game.lua"
+pattern = '''
+function Game:update_shop(dt)
+'''
+position = "after"
+payload = '''
+    if G.STATE_COMPLETE then SMODS.calculate_context({shop_update = true}) end
+'''
+match_indent = true
