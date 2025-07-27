@@ -11,5 +11,6 @@ Ideas:
  - Dimoniosus: Rolling Stone
 
 Art:
- - OmnipotentEntity: Ninja, Template, Chimera, Census, Hivemind, Rolling Stone
+ - Dimoniosus: Rolling Stone
+ - OmnipotentEntity: Ninja, Template, Chimera, Census, Hivemind
  - /u/yellow-hammer: Filibuster
