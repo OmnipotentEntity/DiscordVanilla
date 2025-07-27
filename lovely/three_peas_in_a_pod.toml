@@ -1,0 +1,30 @@
+[manifest]
+version = "1.0.0"
+dump_lua = true
+priority = 99
+
+# Enables the discard button when there are no discards left but we have the Three Peas in a Pod joker
+[[patches]]
+[patches.pattern]
+target = "functions/button_callbacks.lua"
+pattern = '''
+if G.GAME.current_round.discards_left <= 0 or #G.hand.highlighted <= 0 or #G.hand.highlighted > math.max(G.GAME.starting_params.discard_limit, 0) then 
+'''
+position = "at"
+payload = '''
+if (G.GAME.current_round.discards_left <= 0 and not next(SMODS.find_card('j_uvdm_three_peas'))) or #G.hand.highlighted <= 0 or #G.hand.highlighted > math.max(G.GAME.starting_params.discard_limit, 0) then 
+'''
+match_indent = true
+
+# Clears the variable that tracks whether a pea has been used yet
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = '''
+-- TARGET: pre_discard
+'''
+position = "before"
+payload = '''
+G.uvdm_pea_used = nil
+'''
+match_indent = true

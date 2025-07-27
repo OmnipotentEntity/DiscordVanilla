@@ -5,12 +5,13 @@ Ideas:
  - crittykatie: Census
  - liz\_leziari: Hivemind
  - Mathman2028: Template
- - OmnipotentEntity: Ninja, Chimera
+ - OmnipotentEntity: Ninja, Chimera, Three Peas in a Pod
  - unknownusergd: Student Loan Debt
  - /u/yellow-hammer: Filibuster
  - Dimoniosus: Rolling Stone
 
 Art:
  - Dimoniosus: Rolling Stone
- - OmnipotentEntity: Ninja, Template, Chimera, Census, Hivemind
+ - OmnipotentEntity: Ninja, Template, Chimera, Census, Hivemind, Three Peas in a
+   Pod
  - /u/yellow-hammer: Filibuster
