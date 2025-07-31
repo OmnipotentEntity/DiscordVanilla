@@ -16,7 +16,6 @@ G.localization.misc.v_text.ch_c_reconstruction_win_cond_3={
 G.win_conds.reconstruction = function()
   for _,rank in ipairs(ranks) do
     for _,suit in ipairs(suits) do
-      print(suit .. '_' .. rank)
       local number_seen = 0
       for _,card in pairs(G.playing_cards) do
         if card.base.value == SMODS.Ranks[rank].key
