@@ -1,0 +1,27 @@
+[manifest]
+version = "1.0.0"
+dump_lua = true
+priority = 99
+
+# Check for a win condition, (used for challenges)
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = '''
+if G.GAME.round_resets.ante == G.GAME.win_ante and G.GAME.blind:get_type() == 'Boss' then
+    game_won = true
+    G.GAME.won = true
+'''
+position = "at"
+payload = '''
+if G.GAME.round_resets.ante == G.GAME.win_ante and G.GAME.blind:get_type() == 'Boss' then
+    if not G.GAME.modifiers.win_condition
+      or (type(G.win_conds[G.GAME.modifiers.win_condition]) == 'function' and
+          G.win_conds[G.GAME.modifiers.win_condition]()) then
+        game_won = true
+        G.GAME.won = true
+    else
+        game_over = true
+    end
+'''
+match_indent = true
