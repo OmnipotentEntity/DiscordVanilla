@@ -55,11 +55,7 @@ SMODS.Challenge {
     {
       id = "j_certificate",
       edition = "negative",
-    },
-    {
-      id = "j_dna",
-      edition = "negative",
-    },
+    }
   },
 
   -- Give Tarot Merchant and Overstock for less variance
