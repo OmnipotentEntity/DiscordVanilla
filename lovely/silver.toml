@@ -1,0 +1,30 @@
+[manifest]
+version = "1.0.0"
+dump_lua = true
+priority = 99
+
+# Check for a win condition, (used for challenges)
+[[patches]]
+[patches.pattern]
+target = "functions/common_events.lua"
+pattern = '''
+if card.ability.rental then
+    local ret = {}
+    ret[SMODS.Stickers.rental] = card:calculate_sticker(context, 'rental')
+    return ret, {}
+end
+'''
+position = "at"
+payload = '''
+if card.ability.rental or card.ability.preorder then
+    local ret = {}
+    if card.ability.rental then
+      ret[SMODS.Stickers.rental] = card:calculate_sticker(context, 'rental')
+    end
+    if card.ability.preorder then
+      ret[SMODS.Stickers.uvdm_preorder] = card:calculate_sticker(context, 'uvdm_preorder')
+    end
+    return ret, {}
+end
+'''
+match_indent = true

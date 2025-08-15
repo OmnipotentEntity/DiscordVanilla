@@ -59,7 +59,7 @@ SMODS.Voucher:take_ownership('seed_money', {
   redeem = function(self, card)
     G.GAME.interest_cap = G.GAME.interest_cap + 5 * card.ability.extra.amount
   end,
-})
+}, true)
 
 SMODS.Voucher:take_ownership('money_tree', {
   loc_txt = {
@@ -81,4 +81,4 @@ SMODS.Voucher:take_ownership('money_tree', {
   redeem = function(self, card)
     G.GAME.interest_cap = G.GAME.interest_cap + 5 * card.ability.extra.amount
   end,
-})
+}, true)

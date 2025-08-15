@@ -4,7 +4,8 @@ local dir_list = {
   "Jokers",
   "Consumables",
   "Challenges",
-  "Misc"
+  "Misc",
+  "Stakes"
 }
 
 local main_file = "main.lua"
