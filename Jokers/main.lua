@@ -20,7 +20,8 @@ local file_list = {
   "three_peas_in_a_pod.lua",
   "ascension.lua",
   "youre_it.lua",
-  "suit_change_quartet.lua"
+  "library_card.lua",
+  "suit_change_quartet.lua",
 }
 
 for _, file in ipairs(file_list) do

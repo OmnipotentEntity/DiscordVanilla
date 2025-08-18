@@ -1,0 +1,16 @@
+[manifest]
+version = "1.0.0"
+dump_lua = true
+priority = 99
+
+[[patches]]
+[patches.pattern]
+target = "cardarea.lua"
+pattern = """
+if self == G.jokers then
+"""
+position = "after"
+payload = """
+    G.GAME.uvdm_jokers_owned[card.ability.name] = true
+"""
+match_indent = true

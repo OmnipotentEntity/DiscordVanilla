@@ -11,7 +11,7 @@ Ideas:
    Reconstruction (Challenge)
  - crittykatie: Census, Boss Tag Rework, You're It
  - dudebro80085: Inkwell, Bloodshed, Fore, Kite
- - liz\_leziari: Hivemind
+ - liz\_leziari: Hivemind, Library Card
  - memorialized_: Ascension
  - unknownusergd: Student Loan Debt (Challenge)
 
@@ -19,5 +19,5 @@ Art:
  - /u/yellow-hammer: Filibuster
  - Dimoniosus: Rolling Stone
  - OmnipotentEntity: Ninja, Template, Chimera, Census, Hivemind, Three Peas in a
-   Pod, Ascension, Inkwell, Bloodshed, Fore, Kite
+   Pod, Ascension, Inkwell, Bloodshed, Fore, Kite, Library Card
  - zebragoboom: You're It

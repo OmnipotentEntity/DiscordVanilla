@@ -19,4 +19,9 @@ SMODS.current_mod.reset_game_globals = function(run_start)
   update_hand_text({}, {chips = 0, mult = 0})
   -- For You're It, reset the card chosen
   uvdm_reset_youre_it_card()
+
+  if run_start then
+    -- For Library Card, reset the owned jokers table
+    G.GAME.uvdm_jokers_owned = {}
+  end
 end
