@@ -7,8 +7,10 @@ Ideas:
  - Dimoniosus: Rolling Stone
  - gollap: Pre-Order Sticker
  - Mathman2028: Template
- - OmnipotentEntity: Ninja, Chimera (Spectral), Three Peas in a Pod, Reconstruction (Challenge)
- - crittykatie: Census
+ - OmnipotentEntity: Ninja, Chimera (Spectral), Three Peas in a Pod,
+   Reconstruction (Challenge)
+ - crittykatie: Census, Boss Tag Rework, You're It
+ - dudebro80085: Inkwell, Bloodshed, Fore, Kite
  - liz\_leziari: Hivemind
  - memorialized_: Ascension
  - unknownusergd: Student Loan Debt (Challenge)
@@ -16,4 +18,6 @@ Ideas:
 Art:
  - /u/yellow-hammer: Filibuster
  - Dimoniosus: Rolling Stone
- - OmnipotentEntity: Ninja, Template, Chimera, Census, Hivemind, Three Peas in a Pod, Ascension
+ - OmnipotentEntity: Ninja, Template, Chimera, Census, Hivemind, Three Peas in a
+   Pod, Ascension, Inkwell, Bloodshed, Fore, Kite
+ - zebragoboom: You're It
