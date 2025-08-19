@@ -2,22 +2,24 @@ Programming:
  - OmnipotentEntity: All so far
 
 Ideas:
- - /u/yellow-hammer: Filibuster
+ - crittykatie: Census, Boss Tag Rework, You're It
  - DapperGentleman: Reconstruction (Challenge)
  - Dimoniosus: Rolling Stone
+ - dudebro80085: Inkwell, Bloodshed, Fore, Kite
+ - glowing0v3rlord: Trailblazer
  - gollap: Pre-Order Sticker
+ - liz\_leziari: Hivemind, Library Card
  - Mathman2028: Template
+ - memorialized_: Ascension
  - OmnipotentEntity: Ninja, Chimera (Spectral), Three Peas in a Pod,
    Reconstruction (Challenge)
- - crittykatie: Census, Boss Tag Rework, You're It
- - dudebro80085: Inkwell, Bloodshed, Fore, Kite
- - liz\_leziari: Hivemind, Library Card
- - memorialized_: Ascension
  - unknownusergd: Student Loan Debt (Challenge)
+ - /u/yellow-hammer: Filibuster
 
 Art:
- - /u/yellow-hammer: Filibuster
  - Dimoniosus: Rolling Stone
+ - glowing0v3rlord: Trailblazer
  - OmnipotentEntity: Ninja, Template, Chimera, Census, Hivemind, Three Peas in a
    Pod, Ascension, Inkwell, Bloodshed, Fore, Kite, Library Card
+ - /u/yellow-hammer: Filibuster
  - zebragoboom: You're It
