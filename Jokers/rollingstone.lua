@@ -43,6 +43,11 @@ SMODS.Joker {
         G.rolling_stone_activated_this_reroll = false
       end
     end
+
+    if context.ending_shop and G.rolling_stone_activated_this_reroll then
+      G.GAME.current_round.free_rerolls = math.max(G.GAME.current_round.free_rerolls - 1, 0)
+      G.rolling_stone_activated_this_reroll = false
+    end
   end
 }
 
