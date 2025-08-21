@@ -92,8 +92,7 @@ SMODS.Challenge {
           end
         end
 
-        -- Shuffle the deck (TODO: This is not seeded)
-        pseudoshuffle(cards, pseudoseed("reconstruction_challenge"))
+        pseudoshuffle(cards, pseudoseed("uvdm-reconstruction_deck"))
 
         -- Delete the last 27 cards, leaving behind 25 cards total
         for i = #cards, 26, -1 do
