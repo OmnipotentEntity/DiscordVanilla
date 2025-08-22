@@ -21,6 +21,7 @@ local file_list = {
   "youre_it.lua",
   "library_card.lua",
   "suit_change_quartet.lua",
+  "backup_plan.lua",
 }
 
 for _, file in ipairs(file_list) do
