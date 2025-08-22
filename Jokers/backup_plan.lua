@@ -6,7 +6,7 @@ SMODS.Joker {
       "This Joker gains {C:mult}X#1#{} Mult if",
       "played hand contains 4 or more",
       "scoring cards and cards held in hand",
-      "also contain the same poker hand."
+      "also contain the same poker hand.",
       "{C:inactive}(Currently {C:mult}X#2#{C:inactive} Mult)"
     },
   },
